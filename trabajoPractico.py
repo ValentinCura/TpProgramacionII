@@ -89,11 +89,9 @@ Pepe = Estudiante('Pepe','Quiroga','pepequiroga@gmail.com','pepe123',11223344,20
 validacion_pepe = Estudiante.validar_credenciales("pepequiroga@gmail.com",'pepe123')
 print(validacion_pepe)
 
-
-
 Sebastian = Profesor('Sebastian','Cabrera','sebastiancabrera@gmail.com','sebas123','Profesor de Literatura',2015)
 validacion_Sebastian = Profesor.validar_credenciales("sebastiancabrera@gmail.com",'sebas123')
 print(validacion_Sebastian)
+
 #programacion = Curso("ProgramacionII")
 #programacion.generar_contrasenia()
-
