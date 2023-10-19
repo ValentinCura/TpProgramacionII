@@ -3,43 +3,14 @@ import generar_contrasenia as g_c
 
 lista_estudiantes = []
 lista_profesores = []
-<<<<<<< HEAD
-
-def menuAlumno():
-=======
 cursosTotales = []
 def menuAlumno(email_ingresado):
     opcionAlumno = 0
->>>>>>> RamaValentinCura
     while opcionAlumno != 3:
         print("\n.: Menú del Alumno :.")
         print("1. Matricularse a un curso")
         print("2. Ver curso")
         print("3. Volver al menú principal")
-<<<<<<< HEAD
-        
-        opcionAlumno = input("Ingrese su opción: ")
-
-        if opcionAlumno == '1':
-            print("Matricularse a un curso...")
-        elif opcionAlumno == '2':
-            print("Ver curso...")
-        elif opcionAlumno == '3':
-            print("Volviendo al menu principal... \n")
-        else:
-            print("Opción no válida. Intente nuevamente.")
-
-def menu():
-    print("Menu:")
-    print("1. Ingresar como alumno")
-    print("2. Ingresar como profesor")
-    print("3. Ver cursos")
-    print("4. Salir")
-
-    opcion = int(input("\nSeleccione la opcion deseada: "))
-
-    while opcion != 4:
-=======
         opcionAlumno = int(input("Ingrese su opción: "))
 
         if opcionAlumno == 1:
@@ -98,7 +69,6 @@ def menu():
         print("3. Ver cursos")
         print("4. Salir")
         opcion = int(input("\nSeleccione la opcion deseada: "))
->>>>>>> RamaValentinCura
         if opcion == 1:
             email_ingresado = str(input("Ingrese su mail: "))
             password_ingresado = str(input("Ingrese su contrasenia: "))
@@ -106,19 +76,6 @@ def menu():
             if estudiante:
                 estudiante = Estudiante.validar_credenciales(email_ingresado,password_ingresado)
                 if estudiante:
-<<<<<<< HEAD
-                    menuAlumno()
-                else:print("Error de ingreso...\n")
-            else: print("Debe darse de alta en el alumnado...\n")
-
-        elif opcion == 2:
-            # Acciones para la opción 2
-            print("Seleccionó la opción 2")
-
-        elif opcion == 3:
-            # Acciones para la opción 3
-            print("Seleccionó la opción 3")
-=======
                     menuAlumno(email_ingresado)
                 else:print("\nError de ingreso...\n")
             else: print("\nDebe darse de alta en el alumnado...\n")
@@ -146,7 +103,6 @@ def menu():
             print("Materia: Programación I\tCarrera: Tecnicatura Universitaria en Programación")
             print("Materia: Programación II\tCarrera: Tecnicatura Universitaria en Programación")
 
->>>>>>> RamaValentinCura
             
         elif opcion == 4:
             print("Salida exitosa...")
@@ -262,15 +218,6 @@ Pepe = Estudiante('Pepe','Quiroga','pepequiroga@gmail.com','pepe123',11223344,20
 Raul = Estudiante('Raul','Gonzales','raulg@gmail.com','raul112',11335562,2016)
 
 #Profesores
-<<<<<<< HEAD
-Sebastian = Profesor('Sebastian','Cabrera','sebastiancabrera@gmail.com','sebas123','Profesor de Literatura',2015)
-Martin = Profesor('Martin','Martinez','martinmartinez@gmail.com','marto123','Profesor de Programacion',2011)
-
-#Llamamos al menu principal
-
-menu()
-
-=======
 sebastian = Profesor('Sebastian','Cabrera','sebastiancabrera@gmail.com','sebas123','Ingenieria De Sistemas',2015)
 martin = Profesor('Martin','Martinez','martinmartinez@gmail.com','marto123','Tecnico superior en Programacion',2011)
 juan = Profesor('Juan','Perez','juanperez@gmail.com','juan123','Desarrollador de Software',2013)
@@ -279,11 +226,8 @@ lista_profesores.append(martin)
 lista_profesores.append(juan)
 
 #Ejemplo Curso
->>>>>>> RamaValentinCura
 
 
 #Llamamos al menu principal
 
 menu()
-
-#Terminar opcion 1 menu alumno
