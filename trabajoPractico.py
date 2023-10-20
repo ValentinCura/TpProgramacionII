@@ -9,7 +9,7 @@ def menuAlumno(email_ingresado):
     while opcionAlumno != 3:
         print("\n.: Menú del Alumno :.")
         print("1. Matricularse a un curso")
-        print("2. Ver curso")
+        print("2. Ver cursos")
         print("3. Volver al menú principal")
         opcionAlumno = int(input("Ingrese su opción: "))
 
@@ -17,12 +17,40 @@ def menuAlumno(email_ingresado):
             if not cursosTotales:
                 print("\nNo hay cursos disponibles.\n")
             else:
+                print("Cursos disponibles:")
+                i=1
                 for cursoIndividual in cursosTotales:
-                    print("Cursos disponibles:")
-                    print(cursoIndividual._nombre)
-                
+                    print(f"{i}. {cursoIndividual._nombre}")
+                    i+=1
+                opcionCurso = int(input("\nIngrese el curso que desea... "))
+                if opcionCurso< 1 or opcionCurso > i:
+                    print("\nIngrese correctamente.")
+                else: 
+                    indiceCurso = opcionCurso - 1
+                    cursoSeleccionado = cursosTotales[indiceCurso]
+                    for estudiante in lista_estudiantes:
+                        if estudiante._email == email_ingresado:
+                            estudiante.matricular_en_curso(cursoSeleccionado)
+                            break
+
+
         elif opcionAlumno == 2:
-            print("\nVer curso...")
+            
+            for estudiante in lista_estudiantes:
+                if estudiante._email == email_ingresado:
+                    if not estudiante._mis_cursos:
+                        print(f"Usted no se encuentra matriculado en ningun curso.")
+
+                    else:
+                        print(f"Cursos:")
+                        i=1
+                        for cursoInd in estudiante._mis_cursos:
+                            print(f"{i}. {cursoInd._nombre}")
+                            i += 1
+                    break
+
+                    
+
 
         elif opcionAlumno == 3:
             print("\nVolviendo al menu principal... \n")
@@ -38,23 +66,28 @@ def menuProfesor(email_ingresado):
         print("2. Ver curso")
         print("3. Volver al menú principal")
         
-        opcionProfesor = int(input("Ingrese su opción: "))
+        opcionProfesor = int(input("\nIngrese su opción: "))
 
         if opcionProfesor == 1:
-            print("\nMatricularse a un curso...")
-            if martin._email == email_ingresado:
-                martin.dictar_curso()
-
-            elif juan._email == email_ingresado:
-                
-                juan.dictar_curso()
-            else:
-                sebastian.dictar_curso()
+            
+            for profesor in lista_profesores:
+                if profesor._email == email_ingresado:
+                    profesor.dictar_curso()
+                    break
 
 
 
         elif opcionProfesor == 2:
-            print("\nVer curso...")
+            for profesor in lista_profesores:
+                if profesor._email == email_ingresado:
+                    if not profesor._mis_cursos:
+                        print(f"\nUsted no posee cursos dados de alta\n")
+                        
+                    else: 
+                        print(f"Cursos: ")
+                        for curso in profesor._mis_cursos:
+                            print(f"-{curso}")
+                    break
         elif opcionProfesor == 3:
             print("\nVolviendo al menú principal... \n")
         else:
@@ -95,13 +128,17 @@ def menu():
 
 
         elif opcion == 3:
-            print("Seleccionó la opción 3")
-            print("Materia: InglesI\tCarrera: Tecnicatura Universitaria en Programación")
-            print("Materia: InglesII\tCarrera: Tecnicatura Universitaria en Programación")
-            print("Materia: Laboratorio I\tCarrera: Tecnicatura Universitaria en Programación")
-            print("Materia: Laboratorio II\tCarrera: Tecnicatura Universitaria en Programación")
-            print("Materia: Programación I\tCarrera: Tecnicatura Universitaria en Programación")
-            print("Materia: Programación II\tCarrera: Tecnicatura Universitaria en Programación")
+            if not cursosTotales:
+                print("No hay cursos disponibles aun")
+            else:
+                cursosOrdenados = sorted(cursosTotales, key=lambda cursoIndividual: cursoIndividual._nombre)
+                print(f"Cursos:\n")
+                i=1
+                for curso in cursosOrdenados:
+                    print(f"{i} {curso._nombre}\t Carrera: Tecnicatura Universitaria en Programación")
+                    i+=1
+                print()
+
 
             
         elif opcion == 4:
@@ -139,7 +176,7 @@ class Estudiante(Usuario):
         self._legajo = legajo
         self._anio_inscripcion_carrera = anioInscripcion
         lista_estudiantes.append(self)
-        self._listaCursos = []
+        self._mis_cursos = []
 
     def __str__(self):
         return "Soy un estudiante"
@@ -161,14 +198,24 @@ class Estudiante(Usuario):
                     return True
         return False
 
-    def matricular_en_curso(curso):
-        pass
+    def matricular_en_curso(self,curso):
+        clave_curso = input("Ingrese la clave de matriculación del curso: ")
+
+        if curso in self._mis_cursos:
+            print("Usted ya se encuentra matriculado en este curso...")
+        else:
+            if curso._contrasenia_matriculacion == clave_curso:
+                self._mis_cursos.append(curso)
+                print("Curso añadido correctamente!")
+            else:
+                print("Clave de matriculación incorrecta.")
+
 class Profesor(Usuario):
     def __init__(self, nombre, apellido, email, contrasenia,titulo,anioEgreso):
         super().__init__(nombre, apellido, email, contrasenia)
         self._titulo = titulo
         self._anio_egreso = anioEgreso
-        self._cursosProfesor = []
+        self._mis_cursos = []
         lista_profesores.append(self)
     def __str__(self):
         return "Soy un profesor"
@@ -178,7 +225,7 @@ class Profesor(Usuario):
         cursoGenerado = Curso(nombreCurso)
         cursoGenerado.generar_contrasenia()
         cursosTotales.append(cursoGenerado)
-        self._cursosProfesor.append(cursoGenerado)
+        self._mis_cursos.append(cursoGenerado)
         print(f"Curso generado exitosamente...")
         print(f"Nombre: {cursoGenerado._nombre}\nContraseña: {cursoGenerado._contrasenia_matriculacion}\n")
 
@@ -203,20 +250,23 @@ class Profesor(Usuario):
 
 
 class Curso():
+    
     def __init__(self,nombre):
         self._nombre = nombre
         self._contrasenia_matriculacion = None
         
+        
     def __str__(self) -> str:
-        return f"Nombre del curso: {self._nombre}\nContrasenia: {self._contrasenia_matriculacion}"
+        return f"{self._nombre}\nContrasenia: {self._contrasenia_matriculacion}"
     def generar_contrasenia(self) -> str:
         contrasenia = g_c.generar_contrasenia()
         self._contrasenia_matriculacion = contrasenia
         
 #Estudiantes
-Pepe = Estudiante('Pepe','Quiroga','pepequiroga@gmail.com','pepe123',11223344,2015)
-Raul = Estudiante('Raul','Gonzales','raulg@gmail.com','raul112',11335562,2016)
-
+pepe = Estudiante('Pepe','Quiroga','pepequiroga@gmail.com','pepe123',11223344,2015)
+raul = Estudiante('Raul','Gonzales','raulg@gmail.com','raul112',11335562,2016)
+lista_estudiantes.append(pepe)
+lista_estudiantes.append(raul)
 #Profesores
 sebastian = Profesor('Sebastian','Cabrera','sebastiancabrera@gmail.com','sebas123','Ingenieria De Sistemas',2015)
 martin = Profesor('Martin','Martinez','martinmartinez@gmail.com','marto123','Tecnico superior en Programacion',2011)
@@ -224,9 +274,6 @@ juan = Profesor('Juan','Perez','juanperez@gmail.com','juan123','Desarrollador de
 lista_profesores.append(sebastian)
 lista_profesores.append(martin)
 lista_profesores.append(juan)
-
-#Ejemplo Curso
-
 
 #Llamamos al menu principal
 
