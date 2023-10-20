@@ -275,9 +275,6 @@ lista_profesores.append(sebastian)
 lista_profesores.append(martin)
 lista_profesores.append(juan)
 
-#Ejemplo Curso
-
-
 #Llamamos al menu principal
 
 menu()
