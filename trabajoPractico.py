@@ -1,9 +1,13 @@
+#Modulos utilizados
 from abc import ABC, abstractmethod
 import generar_contrasenia as g_c
 
+#Listas vacias para almacenar estudiantes, profesores, y cursos respectivamente.
 lista_estudiantes = []
 lista_profesores = []
 cursosTotales = []
+
+#Menu Alumno
 def menuAlumno(email_ingresado):
     opcionAlumno = 0
     while opcionAlumno != 3:
@@ -35,11 +39,10 @@ def menuAlumno(email_ingresado):
 
 
         elif opcionAlumno == 2:
-            
             for estudiante in lista_estudiantes:
                 if estudiante._email == email_ingresado:
                     if not estudiante._mis_cursos:
-                        print(f"Usted no se encuentra matriculado en ningun curso.")
+                        print(f"\nUsted no se encuentra matriculado en ningun curso.")
 
                     else:
                         print(f"Cursos:")
@@ -49,15 +52,12 @@ def menuAlumno(email_ingresado):
                             i += 1
                     break
 
-                    
-
-
         elif opcionAlumno == 3:
             print("\nVolviendo al menu principal... \n")
 
         else:
             print("\nOpción no válida. Intente nuevamente.")
-
+#Menu profesor
 def menuProfesor(email_ingresado):
     opcionProfesor = 0
     while opcionProfesor != 3:
@@ -69,29 +69,30 @@ def menuProfesor(email_ingresado):
         opcionProfesor = int(input("\nIngrese su opción: "))
 
         if opcionProfesor == 1:
-            
             for profesor in lista_profesores:
-                if profesor._email == email_ingresado:
+                if profesor._email == email_ingresado: #Coincidencia del mail
                     profesor.dictar_curso()
                     break
 
-
-
         elif opcionProfesor == 2:
             for profesor in lista_profesores:
-                if profesor._email == email_ingresado:
+                if profesor._email == email_ingresado: #Coincidencia del mail
                     if not profesor._mis_cursos:
                         print(f"\nUsted no posee cursos dados de alta\n")
-                        
                     else: 
                         print(f"Cursos: ")
+                        i=1
                         for curso in profesor._mis_cursos:
-                            print(f"-{curso}")
+                            print(f"{i}-{curso._nombre}")
+                            i+=1
                     break
+
         elif opcionProfesor == 3:
             print("\nVolviendo al menú principal... \n")
+
         else:
             print("\nOpción no válida. Intente nuevamente.")
+#Menu Principal
 def menu():
     
     opcion = 0
@@ -129,7 +130,7 @@ def menu():
 
         elif opcion == 3:
             if not cursosTotales:
-                print("No hay cursos disponibles aun")
+                print("\nNo hay cursos disponibles aun\n")
             else:
                 cursosOrdenados = sorted(cursosTotales, key=lambda cursoIndividual: cursoIndividual._nombre)
                 print(f"Cursos:\n")
@@ -143,7 +144,7 @@ def menu():
             
         elif opcion == 4:
             print("Salida exitosa...")
-    
+#Clase abstracta Usuario
 class Usuario(ABC):
 
     def __init__(self,nombre,apellido,email,contrasenia):
@@ -160,17 +161,16 @@ class Usuario(ABC):
         self._email = email
         self._contrasenia = contrasenia
 
-    
     @abstractmethod
     def __str__(self):
         return f"Nombre: {self._nombre}\nApellido: {self._apellido}\nEmail: {self._email}\nContrasenia: {self._contrasenia}"
 
     @abstractmethod
     def validar_credenciales(self, mail_a_validar, contrasenia_a_validar):
-        pass
-            
-
+        pass         
+#Clase estudiante
 class Estudiante(Usuario):
+
     def __init__(self, nombre, apellido, email, contrasenia,legajo,anioInscripcion):
         super().__init__(nombre, apellido, email, contrasenia)
         self._legajo = legajo
@@ -180,17 +180,20 @@ class Estudiante(Usuario):
 
     def __str__(self):
         return "Soy un estudiante"
+    
     def validar_credenciales(mail_a_validar=None, contrasenia_a_validar=None):
         if mail_a_validar is not None and contrasenia_a_validar is not None:
             # Correo y Contraseña
             for estudiante in lista_estudiantes:
                 if estudiante._email == mail_a_validar and estudiante._contrasenia == contrasenia_a_validar:
                     return True
+                
         elif mail_a_validar is not None:
             # Correo solamente
             for estudiante in lista_estudiantes:
                 if estudiante._email == mail_a_validar:
                     return True
+                
         elif contrasenia_a_validar is not None:
             # Contraseña solamente
             for estudiante in lista_estudiantes:
@@ -206,28 +209,37 @@ class Estudiante(Usuario):
         else:
             if curso._contrasenia_matriculacion == clave_curso:
                 self._mis_cursos.append(curso)
-                print("Curso añadido correctamente!")
+                print("\nCurso añadido correctamente!")
             else:
-                print("Clave de matriculación incorrecta.")
-
+                print("\nClave de matriculación incorrecta.")
+#Clase profesor
 class Profesor(Usuario):
+
     def __init__(self, nombre, apellido, email, contrasenia,titulo,anioEgreso):
         super().__init__(nombre, apellido, email, contrasenia)
         self._titulo = titulo
         self._anio_egreso = anioEgreso
         self._mis_cursos = []
         lista_profesores.append(self)
+
     def __str__(self):
         return "Soy un profesor"
     
     def dictar_curso(self):
         nombreCurso = str(input("Ingrese el nombre de su curso: "))
         cursoGenerado = Curso(nombreCurso)
-        cursoGenerado.generar_contrasenia()
-        cursosTotales.append(cursoGenerado)
-        self._mis_cursos.append(cursoGenerado)
-        print(f"Curso generado exitosamente...")
-        print(f"Nombre: {cursoGenerado._nombre}\nContraseña: {cursoGenerado._contrasenia_matriculacion}\n")
+        bandera = True  #Validacion de no dar de alta dos o mas veces un mismo curso.
+        for curso in cursosTotales:
+            if curso._nombre == cursoGenerado._nombre:
+                bandera = False 
+        if bandera:
+            cursoGenerado.generar_contrasenia()
+            cursosTotales.append(cursoGenerado)
+            self._mis_cursos.append(cursoGenerado)
+            print(f"\nCurso generado exitosamente...")
+            print(f"Nombre: {cursoGenerado._nombre}\nContraseña: {cursoGenerado._contrasenia_matriculacion}\n")
+        else: 
+            print(f"\nEl curso ya se encuentra dado de alta.")  
 
     def validar_credenciales(mail_a_validar=None, contrasenia_a_validar=None):
         if mail_a_validar is not None and contrasenia_a_validar is not None:
@@ -235,20 +247,20 @@ class Profesor(Usuario):
             for profesor in lista_profesores:
                 if profesor._email == mail_a_validar and profesor._contrasenia == contrasenia_a_validar:
                     return True
+                
         elif mail_a_validar is not None:
             # Correo solamente
             for profesor in lista_profesores:
                 if profesor._email == mail_a_validar:
                     return True
+                
         elif contrasenia_a_validar is not None:
             # Contraseña solamente
             for profesor in lista_profesores:
                 if profesor._contrasenia == contrasenia_a_validar:
                     return True
         return False
-
-
-
+#Clase Curso
 class Curso():
     
     def __init__(self,nombre):
@@ -262,12 +274,13 @@ class Curso():
         contrasenia = g_c.generar_contrasenia()
         self._contrasenia_matriculacion = contrasenia
         
-#Estudiantes
+#Instancias estudiantes
 pepe = Estudiante('Pepe','Quiroga','pepequiroga@gmail.com','pepe123',11223344,2015)
 raul = Estudiante('Raul','Gonzales','raulg@gmail.com','raul112',11335562,2016)
 lista_estudiantes.append(pepe)
 lista_estudiantes.append(raul)
-#Profesores
+
+#Instancias profesores
 sebastian = Profesor('Sebastian','Cabrera','sebastiancabrera@gmail.com','sebas123','Ingenieria De Sistemas',2015)
 martin = Profesor('Martin','Martinez','martinmartinez@gmail.com','marto123','Tecnico superior en Programacion',2011)
 juan = Profesor('Juan','Perez','juanperez@gmail.com','juan123','Desarrollador de Software',2013)
@@ -276,5 +289,4 @@ lista_profesores.append(martin)
 lista_profesores.append(juan)
 
 #Llamamos al menu principal
-
 menu()
