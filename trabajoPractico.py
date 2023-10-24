@@ -80,11 +80,27 @@ def menuProfesor(email_ingresado):
                     if not profesor._mis_cursos:
                         print(f"\nUsted no posee cursos dados de alta\n")
                     else: 
+<<<<<<< HEAD
                         print(f"Cursos: ")
+=======
+                        print(f"\nCursos: ")
+>>>>>>> RamaValentinCura
                         i=1
                         for curso in profesor._mis_cursos:
                             print(f"{i}-{curso._nombre}")
                             i+=1
+<<<<<<< HEAD
+=======
+                        opcionCurso = int(input(f"\nSeleccione un curso: "))
+                        if opcionCurso > len(profesor._mis_cursos) or opcionCurso <= 0:
+                            print(f"\nError. Debe ingresar el numero correctamente\n")
+                        else:
+                            opcionCurso -= 1
+                            print(f"\nNombre: {profesor._mis_cursos[opcionCurso]._nombre}\nContrasenia: {profesor._mis_cursos[opcionCurso]._contrasenia_matriculacion}")
+                            
+                                             
+                                             
+>>>>>>> RamaValentinCura
                     break
 
         elif opcionProfesor == 3:
