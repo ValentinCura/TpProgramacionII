@@ -80,11 +80,20 @@ def menuProfesor(email_ingresado):
                     if not profesor._mis_cursos:
                         print(f"\nUsted no posee cursos dados de alta\n")
                     else: 
-                        print(f"Cursos: ")
+                        print(f"\nCursos: ")
                         i=1
                         for curso in profesor._mis_cursos:
                             print(f"{i}-{curso._nombre}")
                             i+=1
+                        opcionCurso = int(input(f"\nSeleccione un curso: "))
+                        if opcionCurso > len(profesor._mis_cursos) or opcionCurso <= 0:
+                            print(f"\nError. Debe ingresar el numero correctamente\n")
+                        else:
+                            opcionCurso -= 1
+                            print(f"\nNombre: {profesor._mis_cursos[opcionCurso]._nombre}\nContrasenia: {profesor._mis_cursos[opcionCurso]._contrasenia_matriculacion}")
+                            
+                                             
+                                             
                     break
 
         elif opcionProfesor == 3:
@@ -113,7 +122,7 @@ def menu():
                     menuAlumno(email_ingresado)
                 else:print("\nError de ingreso...\n")
             else: print("\nDebe darse de alta en el alumnado...\n")
-
+#
         elif opcion == 2:
             email_ingresado = str(input("Ingrese su mail: "))
             password_ingresado = str(input("Ingrese su contrasenia: "))
@@ -220,7 +229,7 @@ class Profesor(Usuario):
         self._titulo = titulo
         self._anio_egreso = anioEgreso
         self._mis_cursos = []
-        lista_profesores.append(self)
+        #lista_profesores.append(self)
 
     def __str__(self):
         return "Soy un profesor"
