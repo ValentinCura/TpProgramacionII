@@ -113,7 +113,7 @@ def menu():
                     menuAlumno(email_ingresado)
                 else:print("\nError de ingreso...\n")
             else: print("\nDebe darse de alta en el alumnado...\n")
-
+#
         elif opcion == 2:
             email_ingresado = str(input("Ingrese su mail: "))
             password_ingresado = str(input("Ingrese su contrasenia: "))
@@ -220,7 +220,7 @@ class Profesor(Usuario):
         self._titulo = titulo
         self._anio_egreso = anioEgreso
         self._mis_cursos = []
-        lista_profesores.append(self)
+        #lista_profesores.append(self)
 
     def __str__(self):
         return "Soy un profesor"
