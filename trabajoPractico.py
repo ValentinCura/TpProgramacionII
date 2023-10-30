@@ -1,6 +1,7 @@
 #Modulos utilizados
 from abc import ABC, abstractmethod
 import generar_contrasenia as g_c
+from datetime import date
 
 #Listas vacias para almacenar estudiantes, profesores, y cursos respectivamente.
 lista_estudiantes = []
@@ -10,24 +11,25 @@ cursosTotales = []
 #Menu Alumno
 def menuAlumno(email_ingresado):
     opcionAlumno = 0
-    while opcionAlumno != 3:
+    while opcionAlumno != 4:
         print("\n.: Menú del Alumno :.")
         print("1. Matricularse a un curso")
-        print("2. Ver cursos")
-        print("3. Volver al menú principal")
-        opcionAlumno = int(input("Ingrese su opción: "))
+        print("2. Desmatricularse a un curso")
+        print("3. Ver cursos")
+        print("4. Volver al menú principal")
+        opcionAlumno = int(input("\nIngrese: "))
 
         if opcionAlumno == 1:
             if not cursosTotales:
                 print("\nNo hay cursos disponibles.\n")
             else:
-                print("Cursos disponibles:")
+                print("\nCursos disponibles:")
                 i=1
                 for cursoIndividual in cursosTotales:
                     print(f"{i}. {cursoIndividual._nombre}")
                     i+=1
                 opcionCurso = int(input("\nIngrese el curso que desea... "))
-                if opcionCurso< 1 or opcionCurso > i:
+                if opcionCurso < 1 or opcionCurso > i-1:
                     print("\nIngrese correctamente.")
                 else: 
                     indiceCurso = opcionCurso - 1
@@ -37,12 +39,12 @@ def menuAlumno(email_ingresado):
                             estudiante.matricular_en_curso(cursoSeleccionado)
                             break
 
-
         elif opcionAlumno == 2:
+            bandera = True
             for estudiante in lista_estudiantes:
                 if estudiante._email == email_ingresado:
                     if not estudiante._mis_cursos:
-                        print(f"\nUsted no se encuentra matriculado en ningun curso.")
+                        bandera = False
 
                     else:
                         print(f"Cursos:")
@@ -50,9 +52,48 @@ def menuAlumno(email_ingresado):
                         for cursoInd in estudiante._mis_cursos:
                             print(f"{i}. {cursoInd._nombre}")
                             i += 1
+                        indice = i-1
+                        opcCurso = int(input("Seleccione curso...  "))
+                        if opcCurso <= 0 or opcCurso > indice:
+                            print(f"Error, no selecciono correctamente")
+                        else:
+                            curso_a_eliminar = estudiante._mis_cursos[opcCurso - 1]
+                            estudiante._mis_cursos.remove(curso_a_eliminar)
+                            print(f"Se ha desmatriculado del curso: {curso_a_eliminar._nombre}")
                     break
+            if not bandera:
+                print(f"\nUsted no se encuentra matriculado en ningun curso.")
 
         elif opcionAlumno == 3:
+            bandera = True
+            for estudiante in lista_estudiantes:
+                if estudiante._email == email_ingresado:
+                    if not estudiante._mis_cursos:
+                        bandera = False
+
+                    else:
+                        print(f"Cursos:")
+                        i=1
+                        for cursoInd in estudiante._mis_cursos:
+                            print(f"{i}. {cursoInd._nombre}")
+                            i += 1
+                        indice = i-1
+                        opcCurso = int(input("Seleccione curso...  "))
+                        if opcCurso <= 0 or opcCurso > indice:
+                            print(f"Error, no selecciono correctamente")
+                        else:
+                            if not estudiante._mis_cursos[opcCurso - 1]._archivos:
+                                print(f"Sin archivos")
+                            else: 
+                                print("Archivos:")
+                                for archivo in estudiante._mis_cursos[opcCurso - 1]._archivos:
+                                    print(archivo)
+                                print()
+                    break
+            if not bandera:
+                print(f"\nUsted no se encuentra matriculado en ningun curso.")
+                
+        elif opcionAlumno == 4:
             print("\nVolviendo al menu principal... \n")
 
         else:
@@ -90,7 +131,9 @@ def menuProfesor(email_ingresado):
                             print(f"\nError. Debe ingresar el numero correctamente\n")
                         else:
                             opcionCurso -= 1
-                            print(f"\nNombre: {profesor._mis_cursos[opcionCurso]._nombre}\nContrasenia: {profesor._mis_cursos[opcionCurso]._contrasenia_matriculacion}")
+                            cantidadArchivos = len(profesor._mis_cursos[opcionCurso]._archivos)
+                            print(f"\nNombre: {profesor._mis_cursos[opcionCurso]._nombre}\nContrasenia: {profesor._mis_cursos[opcionCurso]._contrasenia_matriculacion}\nCodigo: {profesor._mis_cursos[opcionCurso]._codigo}\nCantidad de archivos: {cantidadArchivos}")
+
                             
                                              
                                              
@@ -122,7 +165,7 @@ def menu():
                     menuAlumno(email_ingresado)
                 else:print("\nError de ingreso...\n")
             else: print("\nDebe darse de alta en el alumnado...\n")
-#
+
         elif opcion == 2:
             email_ingresado = str(input("Ingrese su mail: "))
             password_ingresado = str(input("Ingrese su contrasenia: "))
@@ -136,7 +179,6 @@ def menu():
             else:
                 print("\nDebe darse de alta en el profesorado...\n")
 
-
         elif opcion == 3:
             if not cursosTotales:
                 print("\nNo hay cursos disponibles aun\n")
@@ -148,15 +190,13 @@ def menu():
                     print(f"{i} {curso._nombre}\t Carrera: Tecnicatura Universitaria en Programación")
                     i+=1
                 print()
-
-
-            
+                
         elif opcion == 4:
             print("Salida exitosa...")
 #Clase abstracta Usuario
 class Usuario(ABC):
 
-    def __init__(self,nombre,apellido,email,contrasenia):
+    def __init__(self,nombre: str, apellido: str, email: str, contrasenia: str):
         if not isinstance(nombre, str):
             raise TypeError("El nombre debe ser una cadena de texto.")
         if not isinstance(apellido, str):
@@ -180,7 +220,7 @@ class Usuario(ABC):
 #Clase estudiante
 class Estudiante(Usuario):
 
-    def __init__(self, nombre, apellido, email, contrasenia,legajo,anioInscripcion):
+    def __init__(self, nombre: str, apellido: str, email: str, contrasenia: str,legajo,anioInscripcion):
         super().__init__(nombre, apellido, email, contrasenia)
         self._legajo = legajo
         self._anio_inscripcion_carrera = anioInscripcion
@@ -221,15 +261,17 @@ class Estudiante(Usuario):
                 print("\nCurso añadido correctamente!")
             else:
                 print("\nClave de matriculación incorrecta.")
+    def desmatricular_curso(self,curso):
+        pass
 #Clase profesor
 class Profesor(Usuario):
 
-    def __init__(self, nombre, apellido, email, contrasenia,titulo,anioEgreso):
+    def __init__(self, nombre: str, apellido: str, email: str, contrasenia: str,titulo: str,anioEgreso: int):
         super().__init__(nombre, apellido, email, contrasenia)
         self._titulo = titulo
         self._anio_egreso = anioEgreso
         self._mis_cursos = []
-        #lista_profesores.append(self)
+        lista_profesores.append(self)
 
     def __str__(self):
         return "Soy un profesor"
@@ -241,12 +283,40 @@ class Profesor(Usuario):
         for curso in cursosTotales:
             if curso._nombre == cursoGenerado._nombre:
                 bandera = False 
+
         if bandera:
-            cursoGenerado.generar_contrasenia()
+            
+            añadir = int(input(f"Desea añadir archivos?\n1.Si\n2.No\n")) #Si bien no se aclara en la consigna, hicimos este apartado para añadir archivos.
+            while añadir != 2:
+                if añadir < 1 or añadir > 2:
+                    print(f"\nError... Seleccione correctamente.")
+                    añadir = int(input(f"Desea añadir archivos?\n1.Si\n2.No\n"))
+                elif añadir == 1:
+                    archivoNombre = 0 #Le damos un valor para iniciar el bucle
+                    while archivoNombre != '2':
+                        archivoNombre = input(f"\nIngrese el nombre del archivo que desee añadir, precione dos para salir:\n")
+                        if archivoNombre != '2':
+                            archivoFecha = date.today()
+                            archivoFormato = str(input(f"Ingrese el formato: "))
+                            archivoAñadido = Archivo(archivoNombre,archivoFecha,archivoFormato)
+                            cursoGenerado.nuevo_archivo(archivoAñadido)
+                        elif archivoNombre == '2':
+                            print(f"\nSaliendo...")
+                            añadir = 2    
             cursosTotales.append(cursoGenerado)
             self._mis_cursos.append(cursoGenerado)
             print(f"\nCurso generado exitosamente...")
-            print(f"Nombre: {cursoGenerado._nombre}\nContraseña: {cursoGenerado._contrasenia_matriculacion}\n")
+            print(f"Nombre: {cursoGenerado._nombre}\nContraseña: {cursoGenerado._contrasenia_matriculacion}\nCodigo: {cursoGenerado._codigo}")
+            if not cursoGenerado._archivos:
+                print(f"Sin archivos")
+            else:
+                print(f"Archivos:\n")
+                p = 1
+                for archivoIndividual in cursoGenerado._archivos:
+                    print(f"{p}- {archivoIndividual}")
+                    p+=1
+                    print()
+
         else: 
             print(f"\nEl curso ya se encuentra dado de alta.")  
 
@@ -270,19 +340,39 @@ class Profesor(Usuario):
                     return True
         return False
 #Clase Curso
-class Curso():
-    
-    def __init__(self,nombre):
+class Curso:
+    prox_cod: int = 1
+
+    def __init__(self, nombre):
         self._nombre = nombre
-        self._contrasenia_matriculacion = None
-        
-        
+        self._codigo = Curso.prox_cod 
+        Curso.prox_cod += 1
+        self._contrasenia_matriculacion = Curso.generar_contrasenia()  # Llama al método de clase para generar la contraseña
+        self._archivos = []
+
     def __str__(self) -> str:
-        return f"{self._nombre}\nContrasenia: {self._contrasenia_matriculacion}"
-    def generar_contrasenia(self) -> str:
-        contrasenia = g_c.generar_contrasenia()
-        self._contrasenia_matriculacion = contrasenia
+        return f"{self._nombre}\nCódigo: {self._codigo}\nContraseña: {self._contrasenia_matriculacion}"
+
+    def nuevo_archivo(self, archivo):
+        self._archivos.append(archivo)
+        print(f"\nArchivos agregados correctamente.\n")
+
+    @classmethod
+    def generar_contrasenia(cls) -> str:
+        return g_c.generar_contrasenia()
+    
+class Archivo():
+    def __init__(self,nombre: str, date, formato: str) -> None:
+        self._nombre = nombre
+        self._fecha = date
+        self._formato = formato
+
+    def __str__(self) -> str:
+        return f"{self._nombre}\nFecha: {self._fecha}\nFormato: {self._formato}"
         
+
+
+
 #Instancias estudiantes
 pepe = Estudiante('Pepe','Quiroga','pepequiroga@gmail.com','pepe123',11223344,2015)
 raul = Estudiante('Raul','Gonzales','raulg@gmail.com','raul112',11335562,2016)
